@@ -51,3 +51,5 @@ Quelle: [e-recht24](https://www.e-recht24.de)
 Der [Quellcode](https://github.com/janheinrichmerker/website-wendolin) dieser Webseite ist unter der
 [MIT License](https://opensource.org/licenses/MIT)
 lizensiert.
+
+Die Hintergrundgrafik von [pikisuperstar](https://de.freepik.com/autor/pikisuperstar) ist erhältlich bei [Freepik](https://de.freepik.com/vektoren-kostenlos/aquarell-landschaft-abstrakt_5579808.htm).
