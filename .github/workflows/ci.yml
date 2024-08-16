@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'
+
+jobs:
+  build:
+    name: 🏗️ Hugo build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🧰 Install Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: '0.123.4'
+      - name: 🧰 Install dart-sass-embedded
+        run: sudo snap install dart-sass
+      - name: ♻️ Cache Hugo modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/hugo_cache
+          key: ${{ runner.os }}-hugo-modules-${{ hashFiles('**/go.sum') }}
+          restore-keys: ${{ runner.os }}-hugo-modules-
+      - name: 🏗 Build
+        run: hugo
+        env:
+          HUGO_PARAMS_githubToken: ${{ secrets.GITHUB_TOKEN }}
+      - name: ♻️ Cache link checker requests
+        uses: actions/cache@v4
+        with:
+          path: .lycheecache
+          key: link-checker-${{ github.sha }}
+          restore-keys: link-checker-
+      - name: 🔄 Check links
+        id: linkCheck
+        uses: lycheeverse/lychee-action@v1
+        with:
+          lycheeVersion: '0.13.0'
+          args: --require-https --verbose --no-progress --max-concurrency 2 --base public/ --cache --max-cache-age 1d --exclude heinrich@merker.id --max-retries 10 public/
+          fail: true
+      - name: 📤 Upload public pages
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-pages
+          path: public/
+          if-no-files-found: error
+      - name: 📤 Upload public pages (for GitHub Pages)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public/
+  deploy:
+    name: 🚀 Deploy
+    if: |
+      (github.event_name == 'push' || 
+        github.event_name == 'workflow_dispatch' || 
+        github.event_name == 'schedule') && 
+      (github.ref == 'refs/heads/main' || 
+        startsWith(github.ref, 'refs/tags'))
+    needs:
+      - build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: GitHub Pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Download public pages
+        uses: actions/download-artifact@v4
+        with:
+          name: public-pages
+          path: public/
+      - name: 🚀 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+  release:
+    name: 🚀 Create GitHub release
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Check-out
+        uses: actions/checkout@v4
+      - name: 🏷️ Get version tag
+        id: get-version
+        run: echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
+      - name: 📥 Download public pages
+        uses: actions/download-artifact@v4
+        with:
+          name: public-pages
+          path: public/
+      - name: 🗜️ Create public pages archive
+        run: zip -r public.zip public/
+      - name: 🚀 Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Release ${{ steps.get-version.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: public.zip

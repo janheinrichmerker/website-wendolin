@@ -1,0 +1,169 @@
+@use "sass:math" as math;
+@import url('https://fonts.googleapis.com/css2?family=Rosarivo:ital@0;1&family=Sacramento&display=swap');
+
+$font-family-body: 'Rosarivo', serif;
+$font-size-body: 11pt;
+$line-height-body: 1.5;
+$font-family-secondary: $font-family-body;
+$font-size-secondary: 9pt;
+$line-height-secondary: $line-height-body;
+$font-family-heading: 'Sacramento', sans-serif;
+$font-size-heading: 28pt;
+$line-height-heading: $line-height-body;
+$color-background: #FFFDFA;
+$color-border: #B97B09;
+$color-text: #321E0C;
+$box-shadow-paper: 0 0 3px rgba(0, 0, 0, 0.2);
+$box-shadow-paper-large: 0 0 6px rgba(0, 0, 0, 0.4);
+// {{ $backgroundGrass := resources.Get "img/background-grass.svg" }}
+$background-grass: url('{{ $backgroundGrass.RelPermalink }}');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: $color-text;
+  font-family: $font-family-body;
+  font-size: $font-size-body;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0.5em;
+  overflow-x: clip;
+  overflow-y: auto;
+  position: relative;
+
+  &:before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background: no-repeat 0 center / cover $background-grass;
+    opacity: 0.3;
+    z-index: -1;
+  }
+
+  > nav {
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    font-variant: small-caps;
+
+    a {
+      text-decoration: none;
+      font-weight: bold;
+    }
+  }
+
+  > main {
+    width: 100%;
+    max-width: 800px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  > footer {
+    display: flex;
+    width: 100%;
+    max-width: 800px;
+    text-align: center;
+    font-family: $font-family-secondary;
+    font-size: $font-size-secondary;
+    line-height: $line-height-secondary;
+    justify-content: center;
+    gap: 2em;
+
+    > ul {
+      list-style: none;
+      padding: 0;
+
+      > li {
+        display: inline;
+
+        &:before {
+          display: inline;
+          content: " • ";
+        }
+
+        &:first-of-type:before {
+          display: none;
+        }
+      }
+    }
+  }
+
+  &.home {
+    > main {
+      text-align: center;
+      justify-content: center;
+
+      h1 {
+        font-size: 5em;
+        margin-bottom: 0;
+
+        @media screen and (max-width: 800px) {
+          font-size: 3em;
+        }
+      }
+
+      figure.profile {
+          text-align: center;
+
+          img {
+              width: 25vmin;
+              height: 25vmin;
+              border-radius: 20%;
+              object-fit: cover;
+              box-shadow: $box-shadow-paper-large;
+          }
+      }
+
+      address {
+        display: inline;
+        font-size: 1em;
+        font-style: normal;
+      }
+    }
+  }
+
+  a {
+    color: inherit;
+
+    &:hover {
+      color: mix($color-text, $color-border);
+    }
+
+    &[href^="http://"] {
+      position: relative;
+      text-decoration-style: dotted;
+
+      &:hover::after {
+        content: '{{ i18n "httpLink" }}';
+        display: block;
+        position: absolute;
+        color: $color-text;
+        font-size: $font-size-secondary;
+        background: $color-background;
+        border-radius: 0.5em;
+        padding: 0.25em;
+        box-shadow: $box-shadow-paper;
+      }
+    }
+  }
+
+  h1 {
+    font-family: $font-family-heading;
+    font-size: $font-size-heading;
+    line-height: $line-height-heading;
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0.5em;
+  }
+}

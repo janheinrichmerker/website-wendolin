@@ -1,0 +1,44 @@
+title: "Familie Merker"
+baseURL: "https://merker.id/"
+
+defaultContentLanguage: de
+languages:
+  de:
+    weight: 1
+    languageCode: de-de
+    languageName: Deutsch
+  en:
+    weight: 2
+    languageCode: en-de
+    languageName: English
+
+
+params:
+  env: production
+
+metaDataFormat: yaml
+enableEmoji: true
+enableRobotsTXT: true
+
+disableKinds:
+  - taxonomy
+
+markup:
+  defaultMarkdownHandler: goldmark
+  goldmark:
+    extensions:
+      table: true
+      strikethrough: true
+      linkify: true
+      taskList: true
+      typographer: true
+    renderer:
+      unsafe: True
+  highlight:
+    noClasses: false
+    style: friendly
+
+sitemap:
+  changeFreq: monthly
+  priority: 0.5
+  filename: sitemap.xml

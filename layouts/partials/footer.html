@@ -1,0 +1,19 @@
+<footer>
+    <p>
+        © {{ now.Format "2006" }} {{ i18n "copyrightName" }}
+    </p>
+    {{ if (or $.Site.Menus.footer $.IsTranslated) }}
+        <ul>
+            {{ range $.Site.Menus.footer }}
+                <li>
+                    <a href="{{ .URL }}" title="{{ .Name }}">{{ .Name }}</a>
+                </li>
+            {{ end }}
+            {{ range $.Translations }}
+                <li>
+                    <a href="{{ .RelPermalink }}" title="{{ .Language.LanguageName }}">{{ upper .Language }}</a>
+                </li>
+            {{ end }}
+        </ul>
+    {{ end }}
+</footer>
