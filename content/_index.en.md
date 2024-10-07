@@ -2,7 +2,7 @@
 title: Wendolin
 ---
 
-Hi, I'm Wendolin [von der Hundisburg](http://von-der-hundisburg.de).
+Hi, I'm Wendolin [von der Hundisburg](https://von-der-hundisburg.de).
 
 {{< profile-image >}}
 
